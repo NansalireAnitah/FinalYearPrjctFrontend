@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class JuiceScreen extends StatefulWidget {
-  final List<Map<String, dynamic>> cartItems; // Accepting cartItems as a parameter
+  final List<Map<String, dynamic>>
+      cartItems; // Accepting cartItems as a parameter
   final void Function(Map<String, dynamic> product) onAddToCart;
 
-  const JuiceScreen({super.key, required this.cartItems, required this.onAddToCart});
+  const JuiceScreen(
+      {super.key, required this.cartItems, required this.onAddToCart});
 
   @override
   _JuiceScreenState createState() => _JuiceScreenState();
@@ -15,7 +17,11 @@ class _JuiceScreenState extends State<JuiceScreen> {
   int price = 8000; // Default price for Passion Fruit
 
   final List<Map<String, dynamic>> juiceOptions = [
-    {"name": "Passion Fruit", "image": 'assets/images/juice.jpg', "price": 8000},
+    {
+      "name": "Passion Fruit",
+      "image": 'assets/images/juice.jpg',
+      "price": 8000
+    },
     {"name": "Mango", "image": 'assets/images/juice.jpg', "price": 7000},
     {"name": "Pineapple", "image": 'assets/images/juice.jpg', "price": 7500},
     {"name": "Lemon", "image": 'assets/images/juice.jpg', "price": 6000},
@@ -80,7 +86,7 @@ class _JuiceScreenState extends State<JuiceScreen> {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
+                            color: Colors.grey.withValues(alpha: 0.2),
                             blurRadius: 5,
                             spreadRadius: 2,
                           ),
@@ -95,7 +101,8 @@ class _JuiceScreenState extends State<JuiceScreen> {
                               juice["image"],
                               height: 150, // Adjust height as needed
                               width: double.infinity,
-                              fit: BoxFit.cover, // Ensures the image covers the box well
+                              fit: BoxFit
+                                  .cover, // Ensures the image covers the box well
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -125,7 +132,8 @@ class _JuiceScreenState extends State<JuiceScreen> {
                                 IconButton(
                                   icon: const Icon(Icons.add_shopping_cart),
                                   onPressed: () {
-                                    addToCart(juice["name"], juice["price"], juice["image"]);
+                                    addToCart(juice["name"], juice["price"],
+                                        juice["image"]);
                                   },
                                   color: Colors.red,
                                 ),

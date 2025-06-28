@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable, use_build_context_synchronously
+
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -11,8 +13,6 @@ import 'package:front_end/screens/signup.dart';
 import 'package:provider/provider.dart';
 import 'package:front_end/providers/cart_provider.dart';
 import 'package:front_end/providers/auth_provider.dart';
-// import 'package:image_picker_web/image_picker_web.dart';
-import 'package:universal_html/html.dart' as html;
 import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -148,31 +148,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       throw Exception('Failed to upload image');
     }
 
-    return jsonData['data']['url'];
-  }
-
-  Future<String> _uploadImageToImgBBWeb(html.File imageFile) async {
-    const apiKey = 'a76d491b3f50093fddaf42dcfaedc1c6';
-    final uri = Uri.parse('https://api.imgbb.com/1/upload?key=$apiKey');
-
-    final reader = html.FileReader();
-    reader.readAsArrayBuffer(imageFile);
-    await reader.onLoad.first;
-
-    final bytes = reader.result as List<int>;
-    final base64Image = base64Encode(bytes);
-
-    final response = await http.post(
-      uri,
-      body: {
-        'image': base64Image,
-      },
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Failed to upload image');
-    }
-    final jsonData = json.decode(response.body);
     return jsonData['data']['url'];
   }
 

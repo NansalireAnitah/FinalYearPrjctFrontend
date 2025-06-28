@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../providers/product_provider.dart';
 import '../models/product_model.dart';
-import 'screen3.dart'; // Assuming this is your CheckoutScreen
 
 typedef AddToCartCallback = void Function(Map<String, dynamic> product);
 
@@ -201,7 +200,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             child: Align(
                               alignment: Alignment.bottomCenter,
                               child: Container(
-                                color: Colors.black.withOpacity(0.5),
+                                color: Colors.black.withValues(alpha: 0.5),
                                 padding: const EdgeInsets.all(8.0),
                                 width: double.infinity,
                                 child: Text(

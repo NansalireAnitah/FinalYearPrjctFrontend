@@ -51,9 +51,11 @@ class CartScreen extends StatelessWidget {
         children: [
           Icon(Icons.shopping_cart_outlined, size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
-          Text('Your cart is empty', style: TextStyle(fontSize: 18, color: Colors.grey[600])),
+          Text('Your cart is empty',
+              style: TextStyle(fontSize: 18, color: Colors.grey[600])),
           const SizedBox(height: 8),
-          Text('Browse our menu to add items', style: TextStyle(fontSize: 14, color: Colors.grey[500])),
+          Text('Browse our menu to add items',
+              style: TextStyle(fontSize: 14, color: Colors.grey[500])),
         ],
       ),
     );
@@ -77,7 +79,8 @@ class CartScreen extends StatelessWidget {
     final title = item['title']?.toString() ?? 'Unknown Item';
     final price = (item['price'] as num?)?.toDouble() ?? 0.0;
     final quantity = (item['quantity'] as int?) ?? 1;
-    final imageUrl = item['image']?.toString() ?? 'https://via.placeholder.com/150';
+    final imageUrl =
+        item['image']?.toString() ?? 'https://via.placeholder.com/150';
     final cartItemId = item['cartItemId']?.toString() ?? '';
 
     return Card(
@@ -128,7 +131,8 @@ class CartScreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           title,
-                          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 16),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -147,7 +151,9 @@ class CartScreen extends StatelessWidget {
                     children: [
                       Text(
                         'UGX ${(price * quantity).toStringAsFixed(0)}',
-                        style: TextStyle(color: Colors.green[700], fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.green[700],
+                            fontWeight: FontWeight.bold),
                       ),
                       _buildQuantitySelector(cart, cartItemId, quantity),
                     ],
@@ -161,9 +167,11 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuantitySelector(CartProvider cart, String itemId, int quantity) {
+  Widget _buildQuantitySelector(
+      CartProvider cart, String itemId, int quantity) {
     return Container(
-      decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+          color: Colors.grey[100], borderRadius: BorderRadius.circular(20)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -175,7 +183,8 @@ class CartScreen extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text('$quantity', style: const TextStyle(fontWeight: FontWeight.w500)),
+            child: Text('$quantity',
+                style: const TextStyle(fontWeight: FontWeight.w500)),
           ),
           IconButton(
             icon: const Icon(Icons.add, size: 18),
@@ -194,7 +203,12 @@ class CartScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: Colors.grey.shade200)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, -4))],
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, -4))
+        ],
       ),
       child: Column(
         children: [
@@ -204,7 +218,8 @@ class CartScreen extends StatelessWidget {
               const Text('Subtotal:', style: TextStyle(fontSize: 16)),
               Text(
                 'UGX ${cart.totalPrice.toStringAsFixed(0)}',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -215,7 +230,8 @@ class CartScreen extends StatelessWidget {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange[800],
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
                 elevation: 2,
               ),
               onPressed: () {
@@ -229,10 +245,12 @@ class CartScreen extends StatelessWidget {
                           cartItems: cart.items,
                           onOrderPlaced: (orderId) {
                             cart.clearCart();
-                            Navigator.popUntil(context, (route) => route.isFirst);
+                            Navigator.popUntil(
+                                context, (route) => route.isFirst);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Order #$orderId placed successfully!'),
+                                content: Text(
+                                    'Order #$orderId placed successfully!'),
                                 behavior: SnackBarBehavior.floating,
                               ),
                             );
@@ -248,14 +266,16 @@ class CartScreen extends StatelessWidget {
                       print('Navigation error: $e');
                     }
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to navigate to checkout: $e')),
+                      SnackBar(
+                          content: Text('Failed to navigate to checkout: $e')),
                     );
                   }
                 });
               },
               child: const Text(
                 'PROCEED TO CHECKOUT',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -280,7 +300,9 @@ class CartScreen extends StatelessWidget {
               cart.clearCart();
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Cart cleared'), behavior: SnackBarBehavior.floating),
+                const SnackBar(
+                    content: Text('Cart cleared'),
+                    behavior: SnackBarBehavior.floating),
               );
             },
             child: const Text('Clear', style: TextStyle(color: Colors.red)),

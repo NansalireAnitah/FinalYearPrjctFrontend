@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, unnecessary_null_comparison
+
 import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -81,7 +83,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 }
 
                 final notifications = snapshot.data!.docs
-                    .map((doc) => AppNotification.fromMap(doc.data() as Map<String, dynamic>))
+                    .map((doc) => AppNotification.fromMap(
+                        doc.data() as Map<String, dynamic>))
                     .toList();
 
                 // Update provider with Firestore data
@@ -118,7 +121,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           }
                         },
                         child: Card(
-                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
                           child: ListTile(
                             contentPadding: const EdgeInsets.all(16),
                             leading: Icon(
@@ -130,7 +134,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             title: Text(
                               notification.title,
                               style: TextStyle(
-                                fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
+                                fontWeight: notification.isRead
+                                    ? FontWeight.normal
+                                    : FontWeight.bold,
                               ),
                             ),
                             subtitle: Column(
@@ -153,13 +159,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             ),
                             trailing: notification.items != null
                                 ? IconButton(
-                                    icon: const Icon(Icons.cancel, color: Colors.red),
-                                    onPressed: () => _confirmCancelOrder(context, notification.id),
+                                    icon: const Icon(Icons.cancel,
+                                        color: Colors.red),
+                                    onPressed: () => _confirmCancelOrder(
+                                        context, notification.id),
                                     tooltip: 'Cancel Order',
                                   )
                                 : null,
                             onTap: () async {
-                              final provider = context.read<NotificationProvider>();
+                              final provider =
+                                  context.read<NotificationProvider>();
                               provider.markAsRead(notification.id);
                               if (user != null && !notification.isRead) {
                                 await firestore.FirebaseFirestore.instance
@@ -206,7 +215,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   if (snapshot.hasError) {
                     return const Text('Error fetching order status');
                   }
-                  final orderData = snapshot.data?.data() as Map<String, dynamic>?;
+                  final orderData =
+                      snapshot.data?.data() as Map<String, dynamic>?;
                   final status = orderData?['status'] ?? 'Unknown';
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,11 +226,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
-                      Text('Total: UGX ${notification.total?.toStringAsFixed(0) ?? '0'}'),
+                      Text(
+                          'Total: UGX ${notification.total?.toStringAsFixed(0) ?? '0'}'),
                       const SizedBox(height: 8),
                       Text('Location: ${notification.location ?? 'N/A'}'),
                       const SizedBox(height: 16),
-                      const Text('Items:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text('Items:',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       if (notification.items != null)
                         ...notification.items!.map(
                           (item) => Padding(
@@ -248,7 +260,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 Navigator.pop(context);
                 _confirmCancelOrder(context, notification.id);
               },
-              child: const Text('Cancel Order', style: TextStyle(color: Colors.red)),
+              child: const Text('Cancel Order',
+                  style: TextStyle(color: Colors.red)),
             ),
         ],
       ),
@@ -260,7 +273,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Cancel Order?'),
-        content: const Text('Are you sure you want to cancel this order? This action cannot be undone.'),
+        content: const Text(
+            'Are you sure you want to cancel this order? This action cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -277,7 +291,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       .doc(orderId)
                       .update({'status': 'cancelled'});
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Order cancelled successfully')),
+                    const SnackBar(
+                        content: Text('Order cancelled successfully')),
                   );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -286,7 +301,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Error: Unable to cancel order')),
+                  const SnackBar(
+                      content: Text('Error: Unable to cancel order')),
                 );
               }
             },
@@ -323,7 +339,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 }
                 await batch.commit();
               }
-              Provider.of<NotificationProvider>(context, listen: false).clearAll();
+              Provider.of<NotificationProvider>(context, listen: false)
+                  .clearAll();
               Navigator.pop(context);
             },
             child: const Text('Clear', style: TextStyle(color: Colors.red)),

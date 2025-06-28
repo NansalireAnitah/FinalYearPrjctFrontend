@@ -19,35 +19,72 @@ class MyAuthProvider with ChangeNotifier {
 
   Future<void> _initAuth() async {
     debugPrint('MyAuthProvider: Initializing auth...');
-    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
-      _user = user;
-      if (user != null) {
-        debugPrint(
-            'MyAuthProvider: User authenticated, fetching role for UID: ${user.uid}');
-        await _fetchAndSetRole(user.uid);
+
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      _user = FirebaseAuth.instance.currentUser;
+
+      if (_user != null) {
+        debugPrint('MyAuthProvider: Found existing user: ${_user!.uid}');
+        await _fetchAndSetRole(_user!.uid);
       } else {
-        debugPrint('MyAuthProvider: No user authenticated');
+        debugPrint('MyAuthProvider: No existing user found');
         _role = null;
       }
-      _isLoading = false;
+
       _isInitialized = true;
-      debugPrint(
-          'MyAuthProvider: Initialization complete, isInitialized: $_isInitialized');
+      _isLoading = false;
       notifyListeners();
-    });
+
+      // Listen for auth state changes
+      FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+        debugPrint('MyAuthProvider: Auth state changed - User: ${user?.uid}');
+
+        if (_user?.uid != user?.uid) {
+          _user = user;
+
+          if (user != null) {
+            debugPrint(
+                'MyAuthProvider: User authenticated, fetching role for UID: ${user.uid}');
+            await _fetchAndSetRole(user.uid);
+          } else {
+            debugPrint('MyAuthProvider: User signed out, clearing role');
+            _role = null;
+          }
+
+          notifyListeners();
+        }
+      });
+    } catch (e) {
+      debugPrint('MyAuthProvider: Error during initialization: $e');
+      _user = null;
+      _role = null;
+      _isInitialized = true;
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> _fetchAndSetRole(String uid) async {
     try {
+      debugPrint('MyAuthProvider: Fetching role for UID: $uid');
       final userDoc =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      _role = userDoc.data()?['role'] as String? ?? 'user';
-      debugPrint('MyAuthProvider: Role fetched: $_role');
+
+      if (userDoc.exists) {
+        _role = userDoc.data()?['role'] as String? ?? 'user';
+        debugPrint('MyAuthProvider: Role fetched: $_role');
+      } else {
+        debugPrint(
+            'MyAuthProvider: User document does not exist, defaulting to user role');
+        _role = 'user';
+      }
     } catch (e) {
       debugPrint('MyAuthProvider: Error fetching role: $e');
       _role = 'user';
     }
-    notifyListeners();
   }
 
   Future<String?> getUserRole(String uid) async {
@@ -75,6 +112,8 @@ class MyAuthProvider with ChangeNotifier {
       if (credential.user != null) {
         debugPrint(
             'MyAuthProvider: User created, UID: ${credential.user!.uid}');
+
+        // Create user document
         await FirebaseFirestore.instance
             .collection('users')
             .doc(credential.user!.uid)
@@ -85,6 +124,7 @@ class MyAuthProvider with ChangeNotifier {
           'createdAt': FieldValue.serverTimestamp(),
           'uid': credential.user!.uid,
         });
+
         _user = credential.user;
         _role = 'user';
         debugPrint('MyAuthProvider: User role set to: $_role');
@@ -106,6 +146,7 @@ class MyAuthProvider with ChangeNotifier {
       debugPrint('MyAuthProvider: Logging in user with email: $email');
       final credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+
       _user = credential.user;
       if (_user != null) {
         await _fetchAndSetRole(_user!.uid);
@@ -123,10 +164,15 @@ class MyAuthProvider with ChangeNotifier {
     try {
       _isLoading = true;
       notifyListeners();
+
       debugPrint('MyAuthProvider: Logging out user');
       await FirebaseAuth.instance.signOut();
+
+      // Clear user data
       _user = null;
       _role = null;
+
+      debugPrint('MyAuthProvider: User data cleared');
     } catch (e) {
       debugPrint('MyAuthProvider: Logout error: $e');
       rethrow;
@@ -140,12 +186,14 @@ class MyAuthProvider with ChangeNotifier {
     try {
       _isLoading = true;
       notifyListeners();
+
       debugPrint(
           'MyAuthProvider: Updating user profile for UID: $uid with data: $data');
       await FirebaseFirestore.instance
           .collection('users')
           .doc(uid)
           .update(data);
+
       if (data.containsKey('role')) {
         _role = data['role'] as String?;
         debugPrint('MyAuthProvider: Role updated to: $_role');
@@ -159,5 +207,7 @@ class MyAuthProvider with ChangeNotifier {
     }
   }
 
-  void syncWithFirebaseUser(User user) {}
+  void syncWithFirebaseUser(User user) {
+    // Implementation if needed
+  }
 }

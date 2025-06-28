@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:universal_html/html.dart' as html if (dart.library.io) 'dart:io';
+import 'package:universal_html/html.dart' as html
+    if (dart.library.io) 'dart:io';
 import '../models/product_model.dart';
 import '../providers/product_provider.dart';
 
@@ -41,8 +42,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
     _nameController = TextEditingController(text: widget.product?.name ?? '');
     _descriptionController =
         TextEditingController(text: widget.product?.description ?? '');
-    _priceController =
-        TextEditingController(text: widget.product?.price.toStringAsFixed(0) ?? '');
+    _priceController = TextEditingController(
+        text: widget.product?.price.toStringAsFixed(0) ?? '');
     _categoryController =
         TextEditingController(text: widget.product?.category ?? '');
     _isAvailable = widget.product?.isAvailable ?? true;
@@ -52,27 +53,28 @@ class _AddProductScreenState extends State<AddProductScreen> {
     try {
       if (kIsWeb) {
         // Web implementation
-        final html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
+        final html.FileUploadInputElement uploadInput =
+            html.FileUploadInputElement();
         uploadInput.accept = 'image/*';
         uploadInput.click();
-        
+
         uploadInput.onChange.listen((e) {
           final files = uploadInput.files;
           if (files != null && files.isNotEmpty) {
             final file = files[0];
             final reader = html.FileReader();
-            
+
             reader.onLoadEnd.listen((e) {
               setState(() {
                 _imageBytes = reader.result as Uint8List?;
                 _uploadError = null;
               });
             });
-            
+
             reader.onError.listen((e) {
               setState(() => _uploadError = 'Failed to read image file');
             });
-            
+
             reader.readAsArrayBuffer(file);
           }
         });
@@ -96,9 +98,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
     try {
       final uri = Uri.parse('https://api.imgbb.com/1/upload');
       final request = http.MultipartRequest('POST', uri);
-      
+
       request.fields['key'] = _imgbbApiKey;
-      
+
       if (kIsWeb) {
         if (_imageBytes == null) return null;
         request.files.add(
@@ -125,7 +127,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
       if (jsonData['success'] == true) {
         return jsonData['data']['url'];
       } else {
-        throw Exception('Failed to upload image: ${jsonData['error']?.toString() ?? 'Unknown error'}');
+        throw Exception(
+            'Failed to upload image: ${jsonData['error']?.toString() ?? 'Unknown error'}');
       }
     } catch (e) {
       if (kDebugMode) {
@@ -137,7 +140,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   Future<void> _saveProduct() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     // For new products, require an image
     if ((_image == null && _imageBytes == null) && widget.product == null) {
       setState(() => _uploadError = 'Please select an image');
@@ -151,7 +154,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
     try {
       String? imageUrl;
-      
+
       // Upload new image if selected
       if (_image != null || _imageBytes != null) {
         imageUrl = await _uploadImageToImgBB();
@@ -161,12 +164,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
       }
 
       final product = Product(
-        id: widget.product?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+        id: widget.product?.id ??
+            DateTime.now().millisecondsSinceEpoch.toString(),
         name: _nameController.text,
         description: _descriptionController.text,
         price: double.parse(_priceController.text),
         category: _categoryController.text,
-        imageUrl: imageUrl ?? widget.product?.imageUrl ?? 'https://via.placeholder.com/150',
+        imageUrl: imageUrl ??
+            widget.product?.imageUrl ??
+            'https://via.placeholder.com/150',
         isAvailable: _isAvailable,
         createdAt: widget.product?.createdAt ?? DateTime.now(),
       );
@@ -177,7 +183,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       } else {
         await provider.updateProduct(product);
       }
-      
+
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (kDebugMode) {
@@ -378,7 +384,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   Widget _buildLoadingOverlay() {
     return Container(
-      color: Colors.black.withOpacity(0.3),
+      color: Colors.black.withValues(alpha: 0.3),
       child: const Center(
         child: CircularProgressIndicator(),
       ),
