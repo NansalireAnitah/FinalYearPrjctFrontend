@@ -9,8 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-// import 'package:image_picker_web/image_picker_web.dart';
-import 'package:universal_html/html.dart' as html;
 import '../providers/auth_provider.dart';
 import '../providers/admin_user_provider.dart';
 import '../providers/product_provider.dart';
@@ -86,29 +84,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
     final responseData = await response.stream.bytesToString();
     final jsonData = jsonDecode(responseData);
 
-    if (response.statusCode != 200 || !jsonData['success']) {
-      throw Exception(
-          'Failed to upload image: ${jsonData['error']?['message'] ?? 'Unknown error'}');
-    }
-
-    return jsonData['data']['url'];
-  }
-
-  Future<String?> _uploadImageToImgBBWeb(html.File imageFile) async {
-    final uri = Uri.parse('https://api.imgbb.com/1/upload?key=$_imgbbApiKey');
-    final reader = html.FileReader();
-    reader.readAsArrayBuffer(imageFile);
-    await reader.onLoad.first;
-
-    final bytes = reader.result as List<int>;
-    final base64Image = base64Encode(bytes);
-
-    final response = await http.post(
-      uri,
-      body: {'image': base64Image},
-    );
-
-    final jsonData = jsonDecode(response.body);
     if (response.statusCode != 200 || !jsonData['success']) {
       throw Exception(
           'Failed to upload image: ${jsonData['error']?['message'] ?? 'Unknown error'}');
@@ -361,9 +336,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         .toLowerCase()
                         .contains(_userSearchQuery.toLowerCase()) ||
                     (user.name
-                            ?.toLowerCase()
-                            .contains(_userSearchQuery.toLowerCase()) ??
-                        false))
+                        .toLowerCase()
+                        .contains(_userSearchQuery.toLowerCase())))
                 .toList();
 
         return Column(
@@ -807,8 +781,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       ),
                       trailing: Chip(
                         label: Text(order.status),
-                        backgroundColor:
-                            _getStatusColor(order.status).withOpacity(0.2),
+                        backgroundColor: _getStatusColor(order.status)
+                            .withValues(alpha: 0.2),
                         labelStyle:
                             TextStyle(color: _getStatusColor(order.status)),
                       ),
@@ -1048,7 +1022,7 @@ class AdminCarousel extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       item['label'],
@@ -1327,7 +1301,8 @@ class OrderListItem extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(order.status).withOpacity(0.2),
+                      color:
+                          _getStatusColor(order.status).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(

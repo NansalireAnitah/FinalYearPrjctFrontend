@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:io';
+
 import '../models/product_model.dart';
 
 class ProductProvider with ChangeNotifier {
@@ -30,53 +28,6 @@ class ProductProvider with ChangeNotifier {
       rethrow;
     } finally {
       _setLoading(false);
-    }
-  }
-
-  Future<String> _uploadImageToImgBB(File image) async {
-    try {
-      if (!image.existsSync()) {
-        throw Exception('Image file does not exist: ${image.path}');
-      }
-      const apiKey = 'a76d491b3f50093fddaf42dcfaedc1c6';
-      const uploadUrl = 'https://api.imgbb.com/1/upload';
-
-      final request = http.MultipartRequest('POST', Uri.parse(uploadUrl))
-        ..fields['key'] = apiKey
-        ..files.add(await http.MultipartFile.fromPath('image', image.path));
-
-      if (kDebugMode) {
-        print('Uploading image (${image.lengthSync()} bytes) to $uploadUrl');
-      }
-
-      final response =
-          await request.send().timeout(const Duration(seconds: 30));
-      final responseBody = await response.stream.bytesToString();
-      if (kDebugMode) {
-        print('ImgBB response [${response.statusCode}]: $responseBody');
-      }
-
-      if (response.statusCode != 200) {
-        final jsonData = jsonDecode(responseBody) as Map<String, dynamic>?;
-        throw Exception(
-            'ImgBB failed (${response.statusCode}): ${jsonData?['error']?['message'] ?? responseBody}');
-      }
-
-      final jsonData = jsonDecode(responseBody) as Map<String, dynamic>;
-      final imageUrl = jsonData['data']?['url'] as String?;
-      if (imageUrl == null || imageUrl.isEmpty) {
-        throw Exception('ImgBB returned invalid URL: $jsonData');
-      }
-
-      if (kDebugMode) {
-        print('Image uploaded: $imageUrl');
-      }
-      return imageUrl;
-    } catch (e) {
-      if (kDebugMode) {
-        print('Upload error: $e');
-      }
-      throw Exception('Image upload failed: $e');
     }
   }
 

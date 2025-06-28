@@ -1,7 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:front_end/screens/signup.dart';
-import 'package:front_end/screens/menu_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'home_screen.dart';
@@ -37,7 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       try {
-        final authProvider = Provider.of<MyAuthProvider>(context, listen: false);
+        final authProvider =
+            Provider.of<MyAuthProvider>(context, listen: false);
         await authProvider.login(
           _emailController.text.trim(),
           _passwordController.text,
@@ -105,7 +107,8 @@ class _LoginScreenState extends State<LoginScreen> {
               if (value == null || value.isEmpty) {
                 return 'Please enter your email';
               }
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                  .hasMatch(value)) {
                 return 'Please enter a valid email';
               }
               return null;
@@ -128,7 +131,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Password reset email sent! Check your inbox.'),
+                        content: Text(
+                            'Password reset email sent! Check your inbox.'),
                         backgroundColor: Colors.green,
                       ),
                     );
@@ -202,7 +206,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 8, 8, 8)),
+          icon:
+              const Icon(Icons.arrow_back, color: Color.fromARGB(255, 8, 8, 8)),
           onPressed: () {
             Navigator.pushReplacement(
               context,
@@ -238,8 +243,9 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: Card(
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                color: Colors.white.withOpacity(0.9),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
+                color: Colors.white.withValues(alpha: 0.9),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Form(
@@ -252,7 +258,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         Center(
                           child: Text(
                             'Sungura',
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black,
                                 ),
@@ -262,7 +271,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         Center(
                           child: Text(
                             'Delicious meals at your doorstep',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
                                   color: Colors.grey[600],
                                 ),
                           ),
@@ -338,8 +350,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     : Icons.visibility_off,
                                 color: Colors.grey[500],
                               ),
-                              onPressed: () =>
-                                  setState(() => _isPasswordVisible = !_isPasswordVisible),
+                              onPressed: () => setState(() =>
+                                  _isPasswordVisible = !_isPasswordVisible),
                             ),
                           ),
                           validator: (value) {
@@ -412,7 +424,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             Expanded(child: Divider(color: Colors.grey[300])),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
                               child: Text(
                                 'OR',
                                 style: TextStyle(
@@ -438,7 +451,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const SignUpScreen(isEditing: false),
+                                    builder: (context) =>
+                                        const SignUpScreen(isEditing: false),
                                   ),
                                 );
                               },

@@ -1,7 +1,8 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:front_end/screens/secreen2.dart';
-//import 'screen2.dart'; // Import FinalSplashScreen (update to correct path if needed)
+import 'package:front_end/screens/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   final void Function(dynamic) onAddToCart;
@@ -26,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const FinalSplashScreen()),
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       }
     });

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:front_end/services/authWrapper.dart';
 import 'package:provider/provider.dart';
 import 'package:front_end/screens/admin_dashboard_screen.dart';
 import 'package:front_end/screens/menu_screen.dart';
@@ -8,7 +9,7 @@ import 'package:front_end/providers/product_provider.dart';
 import 'package:front_end/providers/notification_provider.dart';
 import 'package:front_end/providers/cart_provider.dart';
 import 'package:front_end/providers/auth_provider.dart';
-import 'package:front_end/providers/admin_user_provider.dart'; // Add this import
+import 'package:front_end/providers/admin_user_provider.dart';
 import 'package:front_end/screens/splash_screen.dart';
 import 'package:front_end/screens/signup.dart';
 import 'package:front_end/screens/home_screen.dart';
@@ -118,36 +119,6 @@ class SplashScreenWrapper extends StatelessWidget {
         onFinish: () {
           Navigator.of(context).pushReplacementNamed('/authWrapper');
         });
-  }
-}
-
-class AuthWrapper extends StatelessWidget {
-  const AuthWrapper({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final authProvider = Provider.of<MyAuthProvider>(context);
-
-    // Wait for MyAuthProvider to initialize
-    if (!authProvider.isInitialized) {
-      debugPrint('AuthWrapper: Waiting for MyAuthProvider initialization');
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    // Check if user is authenticated
-    if (authProvider.user == null) {
-      debugPrint(
-          'AuthWrapper: No user authenticated, redirecting to LoginScreen');
-      return const LoginScreen();
-    }
-
-    // Route based on role
-    final role = authProvider.role ?? 'user';
-    debugPrint('AuthWrapper: User authenticated, role: $role');
-
-    return role == 'admin' ? const AdminDashboard() : const HomeScreen();
   }
 }
 

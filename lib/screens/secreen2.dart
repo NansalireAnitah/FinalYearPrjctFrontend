@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/screens/secreen3.dart';
- // Import the InitialScreen
+// Import the InitialScreen
 
 class FinalSplashScreen extends StatelessWidget {
   const FinalSplashScreen({super.key});
@@ -31,7 +31,7 @@ class FinalSplashScreen extends StatelessWidget {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withValues(alpha: 0.4),
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
               child: const Text(
                 " soothing soft Drinks",

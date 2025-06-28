@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'login_screen.dart';
 import 'package:front_end/screens/home_screen.dart';
-import 'package:front_end/screens/menu_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   final bool isEditing;
@@ -28,7 +27,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -80,7 +80,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         controller: controller,
         maxLength: maxLength,
         keyboardType: keyboardType,
-        validator: validator ?? (value) => value?.isEmpty ?? true ? "$labelText is required" : null,
+        validator: validator ??
+            (value) => value?.isEmpty ?? true ? "$labelText is required" : null,
         decoration: InputDecoration(
           labelText: labelText,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -110,7 +111,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
               color: Colors.grey[600],
             ),
-            onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+            onPressed: () =>
+                setState(() => _isPasswordVisible = !_isPasswordVisible),
           ),
         ),
       ),
@@ -135,19 +137,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         obscureText: !_isConfirmPasswordVisible,
         validator: _validateConfirmPassword,
         decoration: InputDecoration(
-          labelText: widget.isEditing
-              ? "Confirm New Password"
-              : "Confirm Password",
+          labelText:
+              widget.isEditing ? "Confirm New Password" : "Confirm Password",
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           prefixIcon: const Icon(Icons.lock, color: Colors.grey),
           filled: true,
           fillColor: Colors.grey[50],
           suffixIcon: IconButton(
             icon: Icon(
-              _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              _isConfirmPasswordVisible
+                  ? Icons.visibility
+                  : Icons.visibility_off,
               color: Colors.grey[600],
             ),
-            onPressed: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+            onPressed: () => setState(
+                () => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
           ),
         ),
       ),
@@ -284,8 +288,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: Card(
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                color: Colors.white.withOpacity(0.9),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
+                color: Colors.white.withValues(alpha: 0.9),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Form(
@@ -295,8 +300,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       children: [
                         const SizedBox(height: 20),
                         Text(
-                          widget.isEditing ? 'Update Your Profile' : 'Create Account',
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          widget.isEditing
+                              ? 'Update Your Profile'
+                              : 'Create Account',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
@@ -322,7 +332,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
-                            if (value == null || value.isEmpty) return 'Email is required';
+                            if (value == null || value.isEmpty)
+                              return 'Email is required';
                             if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                                 .hasMatch(value)) {
                               return 'Enter a valid email';
@@ -355,8 +366,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                             ),
                             child: _isLoading
-                                ? const CircularProgressIndicator(color: Colors.white)
-                                : Text(widget.isEditing ? 'SAVE CHANGES' : 'SIGN UP'),
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white)
+                                : Text(widget.isEditing
+                                    ? 'SAVE CHANGES'
+                                    : 'SIGN UP'),
                           ),
                         ),
                         if (!widget.isEditing) ...[
@@ -368,7 +382,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               TextButton(
                                 onPressed: () => Navigator.pushReplacement(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                                  MaterialPageRoute(
+                                      builder: (_) => const LoginScreen()),
                                 ),
                                 child: const Text(
                                   'Login',

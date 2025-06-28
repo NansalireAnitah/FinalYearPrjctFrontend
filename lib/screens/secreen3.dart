@@ -13,14 +13,16 @@ class InitialScreen extends StatelessWidget {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/burgger.jpg'), // Replace with your image path
+                image: AssetImage(
+                    'assets/images/burgger.jpg'), // Replace with your image path
                 fit: BoxFit.cover,
               ),
             ),
           ),
           // Content Overlay
           Container(
-            color: Colors.black.withOpacity(0.5), // Dim the background image
+            color:
+                Colors.black.withValues(alpha: 0.5), // Dim the background image
           ),
           // Centered "Order Now" Button
           Center(
@@ -43,7 +45,8 @@ class InitialScreen extends StatelessWidget {
                   horizontal: 30,
                   vertical: 15,
                 ), // Increase padding for a bigger button
-                minimumSize: const Size(200, 60), // Set a minimum size for the button
+                minimumSize:
+                    const Size(200, 60), // Set a minimum size for the button
               ),
               child: const Text(
                 "Order Now",

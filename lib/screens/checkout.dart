@@ -37,7 +37,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = true;
   bool _isMapReady = false;
-  final firestore.FirebaseFirestore _firestore = firestore.FirebaseFirestore.instance;
+  final firestore.FirebaseFirestore _firestore =
+      firestore.FirebaseFirestore.instance;
   String? _userName;
 
   // Map-related variables
@@ -53,7 +54,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   bool _isFetchingNearby = false;
 
   // Google Maps API key
-  final String _googleApiKey = 'AIzaSyA7w9jicOGfuPbUILRJBud1sVGCukZ-7rI'; // Replace with your actual API key
+  final String _googleApiKey =
+      'AIzaSyA7w9jicOGfuPbUILRJBud1sVGCukZ-7rI'; // Replace with your actual API key
 
   static const _takeAwayImage = 'assets/images/takeaway.jpg';
   static const _deliveryImage = 'assets/images/delivery.jpg';
@@ -64,7 +66,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     if (kIsWeb) {
       _isMapReady = false;
     } else {
-      Future.delayed(Duration(milliseconds: 500), () {
+      Future.delayed(const Duration(milliseconds: 500), () {
         setState(() => _isMapReady = true);
       });
     }
@@ -98,14 +100,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: const Text('Authentication Required'),
-        content: const Text('You need an account to place orders. Please login or sign up.'),
+        content: const Text(
+            'You need an account to place orders. Please login or sign up.'),
         actions: [
           TextButton(
             onPressed: () => _navigateToAuthScreen(const LoginScreen()),
             child: const Text('Login'),
           ),
           TextButton(
-            onPressed: () => _navigateToAuthScreen(const SignUpScreen(isEditing: false)),
+            onPressed: () =>
+                _navigateToAuthScreen(const SignUpScreen(isEditing: false)),
             child: const Text('Sign Up'),
           ),
         ],
@@ -115,7 +119,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   void _navigateToAuthScreen(Widget screen) {
     Navigator.pop(context);
-    Navigator.push(context, MaterialPageRoute(builder: (_) => screen)).then((_) {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => screen))
+        .then((_) {
       if (mounted) {
         _checkAuthStatus();
       }
@@ -124,7 +129,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   void _handleStepContinue() {
     if (_currentStep == 2 && !_formKey.currentState!.validate()) return;
-    if (_currentStep == 2 && _selectedOption == 'Delivery' && _selectedAddress == null) {
+    if (_currentStep == 2 &&
+        _selectedOption == 'Delivery' &&
+        _selectedAddress == null) {
       _showErrorSnackbar('Please select a delivery address.');
       return;
     }
@@ -193,7 +200,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final user = FirebaseAuth.instance.currentUser;
     final items = _formatOrderItems();
     final total = _calculateTotal();
-    final location = _selectedOption == 'Delivery' ? _selectedAddress : 'Take Away';
+    final location =
+        _selectedOption == 'Delivery' ? _selectedAddress : 'Take Away';
 
     final notification = AppNotification(
       id: orderId,
@@ -225,7 +233,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Order #${orderId.substring(0, 8)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text('Order #${orderId.substring(0, 8)}',
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             Text('Total: ${_formatPrice(total)}'),
             const SizedBox(height: 8),
@@ -253,37 +262,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Future<void> _cancelOrder(String orderId) async {
-    try {
-      final orderDoc = await _firestore.collection('orders').doc(orderId).get();
-      if (!orderDoc.exists) {
-        _showErrorSnackbar('Order not found.');
-        return;
-      }
-      final status = orderDoc.data()?['status'] ?? 'Unknown';
-      if (status != 'Pending') {
-        _showErrorSnackbar('Cannot cancel order: Status is $status.');
-        return;
-      }
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        // Delete order and notification from Firestore
-        await _firestore.collection('orders').doc(orderId).delete();
-        await _firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('notifications')
-            .doc(orderId)
-            .delete();
-      }
-      // Remove from local provider
-      context.read<NotificationProvider>().deleteNotification(orderId);
-      _showErrorSnackbar('Order cancelled successfully.');
-    } catch (e) {
-      _showErrorSnackbar('Failed to cancel order: $e');
-    }
-  }
-
   double _calculateTotal() {
     return widget.cartItems.fold(0.0, (sum, item) {
       final price = (item['price'] as num?)?.toDouble() ?? 0.0;
@@ -297,7 +275,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   String _formatPhone(String phone) {
     phone = phone.replaceAll(RegExp(r'\D'), '');
     if (phone.length == 9) return '+256 $phone';
-    if (phone.length == 12) return '+${phone.substring(0, 3)} ${phone.substring(3)}';
+    if (phone.length == 12)
+      return '+${phone.substring(0, 3)} ${phone.substring(3)}';
     return phone;
   }
 
@@ -342,7 +321,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           }
           if (data['status'] == 'OK') {
             setState(() {
-              _placeSuggestions = List<Map<String, dynamic>>.from(data['predictions']);
+              _placeSuggestions =
+                  List<Map<String, dynamic>>.from(data['predictions']);
               _isSearching = false;
             });
             if (kDebugMode) {
@@ -353,7 +333,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             setState(() => _isSearching = false);
           }
         } else {
-          _showErrorSnackbar('Failed to fetch places: HTTP ${response.statusCode}');
+          _showErrorSnackbar(
+              'Failed to fetch places: HTTP ${response.statusCode}');
           setState(() => _isSearching = false);
         }
       } catch (e) {
@@ -399,7 +380,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             CameraUpdate.newLatLngZoom(_selectedLocation, 16),
           );
           if (kDebugMode) {
-            print('Selected location: $_selectedLocation, Address: $_selectedAddress');
+            print(
+                'Selected location: $_selectedLocation, Address: $_selectedAddress');
           }
 
           await _fetchNearbyLocations(_selectedLocation);
@@ -407,7 +389,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           _showErrorSnackbar('Failed to get place details: ${data['status']}');
         }
       } else {
-        _showErrorSnackbar('Failed to get place details: HTTP ${response.statusCode}');
+        _showErrorSnackbar(
+            'Failed to get place details: HTTP ${response.statusCode}');
       }
     } catch (e) {
       _showErrorSnackbar('Error fetching place details: $e');
@@ -444,13 +427,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             _nearbyLocations = List<Map<String, dynamic>>.from(data['results']);
           });
         } else {
-          _showErrorSnackbar('Failed to fetch nearby places: ${data['status']}');
+          _showErrorSnackbar(
+              'Failed to fetch nearby places: ${data['status']}');
           if (kDebugMode) {
             print('Nearby places API error: ${data['status']}');
           }
         }
       } else {
-        _showErrorSnackbar('Failed to fetch nearby places: HTTP ${response.statusCode}');
+        _showErrorSnackbar(
+            'Failed to fetch nearby places: HTTP ${response.statusCode}');
       }
     } catch (e) {
       _showErrorSnackbar('Error fetching nearby locations: $e');
@@ -543,11 +528,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               onPressed: details.onStepContinue,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange[800],
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(
                 _currentStep == 2 ? 'PLACE ORDER' : 'CONTINUE',
-                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ),
           );
@@ -585,15 +572,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Order Summary', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text('Order Summary',
+              style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           ...widget.cartItems.map((item) {
             final price = (item['price'] as num?)?.toDouble() ?? 0.0;
             final quantity = item['quantity'] as int? ?? 1;
-            final imageUrl = item['image']?.toString() ?? 'https://via.placeholder.com/150';
+            final imageUrl =
+                item['image']?.toString() ?? 'https://via.placeholder.com/150';
             return Card(
               elevation: 1,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
               margin: const EdgeInsets.symmetric(vertical: 4),
               child: Padding(
                 padding: const EdgeInsets.all(8),
@@ -613,18 +603,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             width: 60,
                             height: 60,
                             color: Colors.grey[200],
-                            child: const Center(child: CircularProgressIndicator()),
+                            child: const Center(
+                                child: CircularProgressIndicator()),
                           );
                         },
                         errorBuilder: (context, error, stackTrace) {
                           if (kDebugMode) {
-                            print('Checkout item image error for $imageUrl: $error');
+                            print(
+                                'Checkout item image error for $imageUrl: $error');
                           }
                           return Container(
                             width: 60,
                             height: 60,
                             color: Colors.grey[200],
-                            child: const Icon(Icons.fastfood, color: Colors.grey),
+                            child:
+                                const Icon(Icons.fastfood, color: Colors.grey),
                           );
                         },
                       ),
@@ -636,12 +629,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         children: [
                           Text(
                             '${item['title']} x$quantity',
-                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w500),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             _formatPrice(price * quantity),
-                            style: TextStyle(color: Colors.green[700], fontSize: 12),
+                            style: TextStyle(
+                                color: Colors.green[700], fontSize: 12),
                           ),
                         ],
                       ),
@@ -655,10 +650,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('TOTAL:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text('TOTAL:',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               Text(
                 _formatPrice(_calculateTotal()),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ],
           ),
@@ -752,11 +749,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           final place = _placeSuggestions[index];
                           return ListTile(
                             title: Text(
-                              place['structured_formatting']?['main_text'] ?? place['description'] ?? 'Unknown',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              place['structured_formatting']?['main_text'] ??
+                                  place['description'] ??
+                                  'Unknown',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text(
-                              place['structured_formatting']?['secondary_text'] ?? 'No additional info',
+                              place['structured_formatting']
+                                      ?['secondary_text'] ??
+                                  'No additional info',
                               style: const TextStyle(fontSize: 12),
                             ),
                             onTap: () => _selectPlace(place['place_id']),
@@ -788,7 +790,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             onMapCreated: (controller) {
                               _mapController = controller;
                               controller.animateCamera(
-                                CameraUpdate.newLatLngZoom(_selectedLocation, 12),
+                                CameraUpdate.newLatLngZoom(
+                                    _selectedLocation, 12),
                               );
                             },
                             markers: {
@@ -843,24 +846,32 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: GestureDetector(
                                         onTap: () {
-                                          final lat = place['geometry']['location']['lat'];
-                                          final lng = place['geometry']['location']['lng'];
+                                          final lat = place['geometry']
+                                              ['location']['lat'];
+                                          final lng = place['geometry']
+                                              ['location']['lng'];
                                           setState(() {
-                                            _selectedLocation = LatLng(lat, lng);
-                                            _selectedAddress = place['vicinity'] ?? place['name'];
+                                            _selectedLocation =
+                                                LatLng(lat, lng);
+                                            _selectedAddress =
+                                                place['vicinity'] ??
+                                                    place['name'];
                                             _nearbyLocations = [];
                                           });
                                           _mapController?.animateCamera(
-                                            CameraUpdate.newLatLngZoom(_selectedLocation, 16),
+                                            CameraUpdate.newLatLngZoom(
+                                                _selectedLocation, 16),
                                           );
-                                          _fetchNearbyLocations(_selectedLocation);
+                                          _fetchNearbyLocations(
+                                              _selectedLocation);
                                         },
                                         child: Chip(
                                           avatar: Icon(
                                             _getPlaceIcon(place['types']),
                                             size: 20,
                                           ),
-                                          label: Text(place['name'] ?? 'Unknown'),
+                                          label:
+                                              Text(place['name'] ?? 'Unknown'),
                                         ),
                                       ),
                                     );
@@ -904,7 +915,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           _showErrorSnackbar('Failed to get address: ${data['status']}');
         }
       } else {
-        _showErrorSnackbar('Failed to get address: HTTP ${response.statusCode}');
+        _showErrorSnackbar(
+            'Failed to get address: HTTP ${response.statusCode}');
       }
     } catch (e) {
       _showErrorSnackbar('Error fetching address: $e');
@@ -924,7 +936,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: isSelected ? const BorderSide(color: Colors.orange, width: 2) : BorderSide.none,
+        side: isSelected
+            ? const BorderSide(color: Colors.orange, width: 2)
+            : BorderSide.none,
       ),
       child: InkWell(
         onTap: onTap,
@@ -951,7 +965,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               const SizedBox(width: 16),
               Text(label, style: const TextStyle(fontSize: 16)),
               const Spacer(),
-              if (isSelected) const Icon(Icons.check_circle, color: Colors.green),
+              if (isSelected)
+                const Icon(Icons.check_circle, color: Colors.green),
             ],
           ),
         ),
