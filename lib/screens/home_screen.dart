@@ -18,17 +18,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   int _currentIndex = 0;
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-
-  final List<Widget> _screens = [
-    const MenuScreen(),
-    const CartScreen(),
-    const NotificationScreen(),
-    const ProfileScreen(),
-  ];
+  late List<Widget> _screens;
 
   @override
   void initState() {
     super.initState();
+
+    _screens = [
+      const MenuScreen(),
+      CartScreen(onNavigateToMenu: () => _onItemTapped(0)),
+      const NotificationScreen(),
+      const ProfileScreen(),
+    ];
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,

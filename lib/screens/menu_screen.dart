@@ -158,6 +158,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
                 // Custom App Bar
                 SliverAppBar(
                   expandedHeight: 120.0,
+                  automaticallyImplyLeading: false,
                   floating: false,
                   pinned: true,
                   elevation: 0,
@@ -377,20 +378,20 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
+              return SizedBox(
                 height: getCarouselHeight(context),
                 child: const Center(child: CircularProgressIndicator()),
               );
             }
             if (snapshot.hasError) {
-              return Container(
+              return SizedBox(
                 height: getCarouselHeight(context),
                 child: const Center(child: Text('Error loading carousel')),
               );
             }
             final items = snapshot.data?.docs ?? [];
             if (items.isEmpty) {
-              return Container(
+              return SizedBox(
                 height: getCarouselHeight(context),
                 child: const Center(child: Text('No carousel items')),
               );
